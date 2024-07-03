@@ -50,7 +50,7 @@ export const sendInvitationsEmail = authActionClient
 
         const orgId = user.organization_id;
 
-        const org = await getUserOrganisation();
+        const org = await getUserOrganisation(undefined);
 
         if (!org?.data) {
           throw new Error("Organization not found");

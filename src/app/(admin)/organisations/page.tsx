@@ -2,7 +2,7 @@ import { getOrganisations } from "@/server/organisations/queries";
 import Link from "next/link";
 
 export default async function Page() {
-  const resp = await getOrganisations();
+  const resp = await getOrganisations(undefined);
 
   if (!resp?.data) {
     return null;

@@ -2,8 +2,8 @@ import { getOrgUsers } from "@/server/users/queries";
 import { InviteToOrgForm } from "./invite-to-org-form";
 import { OrgUsersTable } from "./org-users-table";
 
-export default async function Component() {
-  const usersForOrg = await getOrgUsers();
+export default async function OrgPage() {
+  const usersForOrg = await getOrgUsers(undefined);
 
   if (!usersForOrg?.data) {
     return null;
