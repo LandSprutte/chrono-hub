@@ -12,7 +12,7 @@ export async function GET(): Promise<Response> {
 
   cookies().set("google_oauth_state", state, {
     path: "/",
-    secure: config.env.NODE_ENV === "production",
+    secure: config.env.VERCEL_ENV === "production",
     httpOnly: true,
     maxAge: 60 * 10, // 10 minutes
     sameSite: "lax",
@@ -20,7 +20,7 @@ export async function GET(): Promise<Response> {
 
   cookies().set("google_oauth_code_verifier", codeVerifier, {
     path: "/",
-    secure: config.env.NODE_ENV === "production",
+    secure: config.env.VERCEL_ENV === "production",
     httpOnly: true,
     maxAge: 60 * 10, // 10 minutes
     sameSite: "lax",

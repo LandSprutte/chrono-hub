@@ -16,8 +16,6 @@ const envAliasMap = {
   development: "DEV",
 } as const;
 
-const envAlias = envAliasMap[config.env.NODE_ENV];
-
 export const getUserByEmail = (email: string) => {
   return db.query.users.findFirst({
     where: (t, { eq }) => eq(t.email, email),
@@ -67,7 +65,7 @@ export const lucia = new Lucia(adapter, {
     expires: false,
     attributes: {
       // set to `true` when using HTTPS
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.VERCEL_ENV === "production",
     },
   },
   getUserAttributes: (user) => {
