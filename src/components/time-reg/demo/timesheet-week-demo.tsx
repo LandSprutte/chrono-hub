@@ -51,6 +51,9 @@ export const TimesheetWeekDemo = () => {
         <DialogContent>
           <TimesheetForm
             onSubmit={(values) => {
+              if (values.hours === 0 && values.minutes === 0) {
+                return;
+              }
               const newDate = new Date(values.date);
               const newDateString = newDate.toDateString();
               const newTimesheet = {
