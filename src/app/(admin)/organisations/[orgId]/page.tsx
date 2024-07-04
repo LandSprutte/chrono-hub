@@ -11,7 +11,9 @@ export default async function OrgPage({
   };
 }) {
   await validateUserIsPartOfOrg({ orgId: params.orgId });
-  const usersForOrg = await getOrgUsers(undefined);
+  const usersForOrg = await getOrgUsers({
+    orgId: parseInt(params.orgId),
+  });
 
   if (!usersForOrg?.data) {
     return null;
