@@ -101,7 +101,12 @@ export function TimesheetForm(props: Props) {
                   <FormItem>
                     <FormLabel>Hours</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="7..." {...field} />
+                      <Input
+                        type="number"
+                        step={1}
+                        placeholder="7..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       The number of hours you worked
@@ -117,7 +122,12 @@ export function TimesheetForm(props: Props) {
                   <FormItem>
                     <FormLabel>Minutes</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="minutes" {...field} />
+                      <Input
+                        type="number"
+                        step={1}
+                        placeholder="minutes"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

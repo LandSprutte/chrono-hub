@@ -8,8 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PenIcon } from "lucide-react";
-import { useState } from "react";
+import { deleteTimesheet } from "@/server/timesheet/actions";
+import { MoreHorizontal } from "lucide-react";
 
 export const ColumnActions = ({
   timesheet,
@@ -51,7 +51,14 @@ export const ColumnActions = ({
           }}
           timesheet={timesheet}
         />
-        <DropdownMenuItem>Invalidate</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            await deleteTimesheet(timesheet.id);
+          }}
+          className="text-red-500 focus:bg-red-100 focus:text-red-500 focus:font-semibold"
+        >
+          delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

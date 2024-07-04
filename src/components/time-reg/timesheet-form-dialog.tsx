@@ -2,7 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { wait } from "@/lib/wait";
-import { ButtonHTMLAttributes, useRef, useState } from "react";
+import { GetMyTimesheetsByWeek } from "@/server/timesheet/queries";
+import confetti from "canvas-confetti";
+import { useRef, useState } from "react";
 import { ConfettiButton } from "../magicui/confetti";
 import { Button, ButtonProps } from "../ui/button";
 import {
@@ -13,9 +15,6 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { TimesheetForm } from "./form";
-import { GetMyTimesheetsByWeek } from "@/server/timesheet/queries";
-import confetti from "canvas-confetti";
-import { set } from "zod";
 
 export const TimesheetFormDialog = (props: {
   timesheet?: GetMyTimesheetsByWeek | null;

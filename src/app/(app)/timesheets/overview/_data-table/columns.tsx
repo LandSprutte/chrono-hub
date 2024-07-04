@@ -1,17 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { GetMyTimesheets } from "@/server/timesheet/queries";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { MoreHorizontal } from "lucide-react";
 import { ColumnActions } from "./column-actions";
 
 export const columns: ColumnDef<GetMyTimesheets>[] = [

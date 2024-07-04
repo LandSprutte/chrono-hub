@@ -18,12 +18,24 @@ export const updateTimesheet = (timesheet: InsertTimesheet, id: number) => {
     .execute();
 };
 
+export const deleteTimesheetBydId = (id: number) => {
+  return db
+    .delete(timesheets)
+    .where(eq(timesheets.id, id))
+    .returning()
+    .execute();
+};
+
 export const getTimesheetsByUser = async (userId: string) => {
   return db.query.timesheets
     .findMany({
       where: (t, { eq }) => eq(t.userId, userId),
     })
     .execute();
+};
+
+export const getTimesheetById = async (id: number) => {
+  return db.query.timesheets.findFirst({ where: (t, { eq }) => eq(t.id, id) });
 };
 
 export const getMyTimesheetsByWeek = async (
