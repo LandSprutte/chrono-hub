@@ -49,6 +49,9 @@ export function TimesheetForm(props: Props) {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
+    if (data.hours === 0 && data.minutes === 0) {
+      return;
+    }
     const model = {
       ...data,
       id: props.copy ? undefined : props.timesheet?.id,
