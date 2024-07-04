@@ -16,8 +16,11 @@ export const getOrgUsers = rolesActionClient([
 
   const orgId = user.organization_id;
 
-  const currentOrgUsers = await db.query.users.findMany({
-    where: (t, { eq }) => eq(t.organization_id, orgId),
+  const currentOrg = await db.query.organizations.findFirst({
+    where: (t, { eq }) => eq(t.id, orgId),
+    with: {
+      users: true,
+    },
   });
 
   const pendingOrgUsers = await db.query.invitations.findMany({
@@ -25,5 +28,5 @@ export const getOrgUsers = rolesActionClient([
       and(eq(t.organizationId, orgId), isNull(t.acceptedAt)),
   });
 
-  return { currentOrgUsers, pendingOrgUsers };
+  return { currentOrg, pendingOrgUsers };
 });

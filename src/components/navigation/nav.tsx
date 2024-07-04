@@ -29,8 +29,10 @@ export const Navigation = (user: User) => {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar className="shadow-lg">
-            <AvatarImage src={user?.picture} alt="profile-image" />
-            <AvatarFallback>{user?.username.slice(0, 1)}</AvatarFallback>
+            <AvatarImage src={user?.picture ?? undefined} alt="profile-image" />
+            <AvatarFallback>
+              {/* {user?.username ?? user?.username.slice(0, 1) ?? ""} */}
+            </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -39,6 +41,11 @@ export const Navigation = (user: User) => {
           <DropdownMenuItem asChild>
             <Link href="/timesheets/overview">All timesheets</Link>
           </DropdownMenuItem>
+          {user.isOrgAdmin && (
+            <DropdownMenuItem asChild>
+              <Link href="/organisations">Organisation</Link>
+            </DropdownMenuItem>
+          )}
           {/* <DropdownMenuItem>Admin</DropdownMenuItem> */}
           <DropdownMenuItem asChild>
             <form action={logout}>

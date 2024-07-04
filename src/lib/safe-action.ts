@@ -14,7 +14,10 @@ export const userRole = {
 type Keys = keyof typeof userRole;
 export type UserRoleValues = (typeof userRole)[Keys];
 
-const userHasRoles = (user: SelectUser, roles: UserRoleValues[]) => {
+export const userHasRoles = (roles: UserRoleValues[], user?: SelectUser) => {
+  if (!user) {
+    return false;
+  }
   return roles.some((role) => user.role === role);
 };
 
@@ -53,7 +56,7 @@ export const rolesActionClient = (roles: UserRoleValues[]) =>
       throw new Error("Not allowed to access this resource");
     }
 
-    if (!userHasRoles(user, roles)) {
+    if (!userHasRoles(roles, user)) {
       throw new Error("Not allowed to access this resource");
     }
 

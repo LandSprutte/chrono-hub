@@ -1,9 +1,18 @@
 "use server";
-import { rolesActionClient, userRole } from "@/lib/safe-action";
-import { invitations, users } from "../db/schema";
+import {
+  authActionClient,
+  rolesActionClient,
+  userHasRoles,
+  userRole,
+} from "@/lib/safe-action";
+import { invitations, users, organizations } from "../db/schema";
 import { z } from "zod";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
+import { orgSchema } from "./validation";
+import { revalidatePath } from "next/cache";
+import { getUserByEmail } from "../auth";
+import { redirect } from "next/navigation";
 
 export const removeUserFromOrganisation = rolesActionClient([userRole.orgAdmin])
   .schema(
@@ -34,4 +43,42 @@ export const removeUserFromOrganisation = rolesActionClient([userRole.orgAdmin])
       console.error(error);
       throw new Error("Failed to remove user from organisation");
     }
+  });
+
+export const createNewOrganisation = rolesActionClient([userRole.ghost])
+  .schema(orgSchema)
+  .action(async ({ parsedInput: input, ctx }) => {
+    const org = await db
+      .insert(organizations)
+      .values({
+        name: input.name,
+      })
+      .returning();
+
+    revalidatePath("/organisations");
+
+    return org[0];
+  });
+
+export const validateUserIsPartOfOrg = authActionClient
+  .schema(z.object({ orgId: z.string() }))
+  .action(async ({ parsedInput: input, ctx }) => {
+    const user = await getUserByEmail(ctx.user.email);
+
+    if (userHasRoles([userRole.ghost], user)) {
+      return true;
+    }
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    if (
+      user?.organization_id &&
+      user.organization_id.toString() !== input.orgId
+    ) {
+      redirect("/timesheets");
+    }
+
+    return true;
   });

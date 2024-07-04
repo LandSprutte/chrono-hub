@@ -30,8 +30,6 @@ export const sendInvitationsEmail = authActionClient
   .action(async ({ parsedInput, ctx }) => {
     const { to } = parsedInput;
 
-    console.log("Sending email to", to, "on behalf of", ctx.user.email);
-
     const result = await db.transaction(async (trx) => {
       try {
         const user = await getUserByEmail(ctx.user.email);
@@ -58,7 +56,7 @@ export const sendInvitationsEmail = authActionClient
 
         const response = await sendEmail(
           to,
-          org?.data?.id.toString(),
+          org?.data?.name.toString(),
           ctx.user
         );
 
@@ -102,13 +100,15 @@ export const resendInvitationEmail = rolesActionClient([userRole.orgAdmin])
       where: (t, { eq }) => eq(t.id, invitationId),
     });
 
+    const org = await getUserOrganisation(undefined);
+
     if (!invitation) {
       throw new Error("Invitation not found");
     }
 
     const response = await sendEmail(
       invitation.email,
-      invitation.organizationId.toString(),
+      org?.data?.name || "Chrono Hub",
       ctx.user
     );
 

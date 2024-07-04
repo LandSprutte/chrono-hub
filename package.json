@@ -25,6 +25,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@react-email/components": "^0.0.20",
     "@t3-oss/env-core": "^0.10.1",
     "@tanstack/react-table": "^8.17.3",
     "arctic": "^1.9.1",

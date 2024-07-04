@@ -4,10 +4,11 @@ import { Lucia } from "lucia";
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 
 import { config } from "@/config";
+import { userHasRoles, userRole } from "@/lib/safe-action";
 import { Google } from "arctic";
 import { cookies } from "next/headers";
 import { db } from "../db";
-import { sessions, users } from "../db/schema";
+import { SelectUser, sessions, users } from "../db/schema";
 
 const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
 
@@ -74,6 +75,7 @@ export const lucia = new Lucia(adapter, {
       username: user.username,
       picture: user.picture,
       email: user.email,
+      isOrgAdmin: userHasRoles([userRole.orgAdmin, userRole.ghost], user),
     };
   },
 });
@@ -91,11 +93,6 @@ export const google = new Google(
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
-    DatabaseUserAttributes: {
-      google_id: number;
-      username: string;
-      picture: string;
-      email: string;
-    };
+    DatabaseUserAttributes: SelectUser;
   }
 }
