@@ -6,9 +6,10 @@ import { todayAsYYYYMMDD } from "@/lib/utils";
 import { wait } from "@/lib/wait";
 import { GetMyTimesheetsByWeek } from "@/server/timesheet/queries";
 import { eachDayOfInterval, endOfWeek, interval, startOfWeek } from "date-fns";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { TimesheetForm } from "../form";
 import { TimesheetWeekOverviewDayLayout } from "../timesheet-overview-day";
+import confetti from "canvas-confetti";
 
 export const TimesheetWeekDemo = () => {
   const date = todayAsYYYYMMDD;
@@ -34,6 +35,8 @@ export const TimesheetWeekDemo = () => {
   const [state, setState] = useState<Record<string, GetMyTimesheetsByWeek[]>>({
     ...daysOfWeek,
   });
+
+  const ref = useRef<HTMLButtonElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -63,6 +66,19 @@ export const TimesheetWeekDemo = () => {
                     [newDateString]: [...prev[newDateString], newTimesheet],
                   } as Record<string, GetMyTimesheetsByWeek[]>)
               );
+              if (!ref.current) {
+                setIsOpen(false);
+                return;
+              }
+              const rect = ref?.current.getBoundingClientRect();
+              const x = rect.left + rect.width / 2;
+              const y = rect.top + rect.height / 2;
+              confetti({
+                origin: {
+                  x: x / window.innerWidth,
+                  y: y / window.innerHeight,
+                },
+              });
               wait(200).then(() => {
                 setIsOpen(false);
               });
@@ -79,7 +95,11 @@ export const TimesheetWeekDemo = () => {
             {/* <ConfettiFireworks type="submit" className="ml-auto min-w-28">
             Save
           </ConfettiFireworks> */}
-            <ConfettiButton type="submit" className="ml-auto min-w-28">
+            <ConfettiButton
+              type="submit"
+              className="ml-auto min-w-28"
+              ref={ref}
+            >
               Save
             </ConfettiButton>
           </TimesheetForm>

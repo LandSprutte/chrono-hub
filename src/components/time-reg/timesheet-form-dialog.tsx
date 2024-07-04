@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { wait } from "@/lib/wait";
-import { useState } from "react";
+import { ButtonHTMLAttributes, useRef, useState } from "react";
 import { ConfettiButton } from "../magicui/confetti";
 import { Button, ButtonProps } from "../ui/button";
 import {
@@ -14,6 +14,8 @@ import {
 } from "../ui/dialog";
 import { TimesheetForm } from "./form";
 import { GetMyTimesheetsByWeek } from "@/server/timesheet/queries";
+import confetti from "canvas-confetti";
+import { set } from "zod";
 
 export const TimesheetFormDialog = (props: {
   timesheet?: GetMyTimesheetsByWeek | null;
@@ -23,6 +25,7 @@ export const TimesheetFormDialog = (props: {
   icon?: React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
 
   const CompIcon = props.icon ?? null;
 
@@ -47,6 +50,19 @@ export const TimesheetFormDialog = (props: {
         <TimesheetForm
           copy={props.copy}
           onSuccess={() => {
+            if (!ref.current) {
+              setIsOpen(false);
+              return;
+            }
+            const rect = ref?.current.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            confetti({
+              origin: {
+                x: x / window.innerWidth,
+                y: y / window.innerHeight,
+              },
+            });
             wait(300).then(() => {
               setIsOpen(false);
             });
@@ -64,7 +80,8 @@ export const TimesheetFormDialog = (props: {
           {/* <ConfettiFireworks type="submit" className="ml-auto min-w-28">
             Save
           </ConfettiFireworks> */}
-          <ConfettiButton type="submit" className="ml-auto min-w-28">
+
+          <ConfettiButton type="submit" className="ml-auto min-w-28" ref={ref}>
             Save
           </ConfettiButton>
         </TimesheetForm>

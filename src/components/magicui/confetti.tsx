@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import confetti from "canvas-confetti";
-import type { ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 import React, {
   createContext,
   forwardRef,
@@ -102,22 +102,27 @@ interface ConfettiButtonProps extends ButtonProps {
   children?: React.ReactNode;
 }
 
-function ConfettiButton({ options, children, ...props }: ConfettiButtonProps) {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    confetti({
-      ...options,
-      origin: {
-        x: x / window.innerWidth,
-        y: y / window.innerHeight,
-      },
-    });
-  };
+function ConfettiButton({
+  options,
+  children,
+  ref,
+  ...props
+}: ComponentPropsWithRef<"button"> & ConfettiButtonProps) {
+  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   const rect = event.currentTarget.getBoundingClientRect();
+  //   const x = rect.left + rect.width / 2;
+  //   const y = rect.top + rect.height / 2;
+  //   confetti({
+  //     ...options,
+  //     origin: {
+  //       x: x / window.innerWidth,
+  //       y: y / window.innerHeight,
+  //     },
+  //   });
+  // };
 
   return (
-    <Button onClick={handleClick} {...props}>
+    <Button ref={ref} {...props}>
       {children}
     </Button>
   );
