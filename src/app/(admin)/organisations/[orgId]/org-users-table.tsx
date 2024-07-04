@@ -1,5 +1,13 @@
 "use client";
 
+import { RoleSelector } from "@/components/admin/role-selector";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -18,15 +26,18 @@ import {
 import { SelectInvitation, SelectUser } from "@/server/db/schema";
 import { resendInvitationEmail } from "@/server/email/actions";
 import { removeUserFromOrganisation } from "@/server/organisations/actions";
+import { User } from "lucia";
 import { SendIcon } from "lucide-react";
 import { useState } from "react";
 
 export const OrgUsersTable = ({
   orgUsers,
   pendingInvites,
+  user: currentLoggedInUser,
 }: {
   pendingInvites: SelectInvitation[];
   orgUsers: SelectUser[];
+  user?: User;
 }) => {
   const extractname = (user: SelectUser | SelectInvitation) => {
     if ("name" in user) {
@@ -34,6 +45,10 @@ export const OrgUsersTable = ({
     }
     return user.email;
   };
+
+  const isInvitation = (
+    user: SelectUser | SelectInvitation
+  ): user is SelectInvitation => "acceptedAt" in user;
 
   const [only, setOnly] = useState<"Users" | "PendingInvites" | null>(null);
 
@@ -91,7 +106,14 @@ export const OrgUsersTable = ({
             <TableRow key={user.id}>
               <TableCell className="font-medium">{extractname(user)}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
+              <TableCell>
+                {isInvitation(user) ? null : (
+                  <RoleSelector
+                    role={user.role}
+                    currentLoggedInUser={currentLoggedInUser}
+                  />
+                )}
+              </TableCell>
               <TooltipProvider>
                 <TableCell>
                   <div className="flex gap-2">

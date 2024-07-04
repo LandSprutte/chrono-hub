@@ -10,7 +10,7 @@ export default async function OrgPage({
     orgId: string;
   };
 }) {
-  await validateUserIsPartOfOrg({ orgId: params.orgId });
+  const user = await validateUserIsPartOfOrg({ orgId: params.orgId });
   const usersForOrg = await getOrgUsers({
     orgId: parseInt(params.orgId),
   });
@@ -26,6 +26,7 @@ export default async function OrgPage({
       </h2>
       <InviteToOrgForm />
       <OrgUsersTable
+        user={user?.data?.user}
         orgUsers={usersForOrg.data.currentOrg?.users ?? []}
         pendingInvites={usersForOrg.data.pendingOrgUsers}
       />

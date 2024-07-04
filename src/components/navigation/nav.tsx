@@ -15,7 +15,13 @@ import { User } from "lucia";
 import { ClockIcon } from "lucide-react";
 import Link from "next/link";
 
-export const Navigation = (user: User) => {
+export const Navigation = ({
+  user,
+  isAdmin,
+}: {
+  user: User;
+  isAdmin: boolean;
+}) => {
   return (
     <nav className="absolute top-2 right-2 flex items-center gap-3">
       <NavLinks href={`/timesheets/${todayAsYYYYMMDD}`}>
@@ -41,7 +47,7 @@ export const Navigation = (user: User) => {
           <DropdownMenuItem asChild>
             <Link href="/timesheets/overview">All timesheets</Link>
           </DropdownMenuItem>
-          {user.isOrgAdmin && (
+          {isAdmin && (
             <DropdownMenuItem asChild>
               <Link href="/organisations">Organisation</Link>
             </DropdownMenuItem>

@@ -28,5 +28,11 @@ export const getOrgUsers = rolesActionClient([
         and(eq(t.organizationId, orgId), isNull(t.acceptedAt)),
     });
 
-    return { currentOrg, pendingOrgUsers };
+    return {
+      currentOrg: {
+        ...currentOrg,
+        users: currentOrg?.users.filter((u) => u.role !== userRole.ghost),
+      },
+      pendingOrgUsers,
+    };
   });

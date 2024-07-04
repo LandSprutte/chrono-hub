@@ -9,7 +9,7 @@ import { invitations, users, organizations } from "../db/schema";
 import { z } from "zod";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
-import { orgSchema } from "./validation";
+import { orgSchema, roleSchema } from "./validation";
 import { revalidatePath } from "next/cache";
 import { getUserByEmail } from "../auth";
 import { redirect } from "next/navigation";
@@ -60,13 +60,32 @@ export const createNewOrganisation = rolesActionClient([userRole.ghost])
     return org[0];
   });
 
+export const updateUserRole = rolesActionClient([
+  userRole.orgAdmin,
+  userRole.ghost,
+])
+  .schema(roleSchema)
+  .action(async ({ parsedInput: input, ctx: { user } }) => {
+    if (!userHasRoles([userRole.ghost, userRole.orgAdmin], user)) {
+      throw new Error("You do not have permission to update user roles");
+    }
+
+    return await db
+      .update(users)
+      .set({
+        role: input.role,
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+  });
+
 export const validateUserIsPartOfOrg = authActionClient
   .schema(z.object({ orgId: z.string() }))
   .action(async ({ parsedInput: input, ctx }) => {
     const user = await getUserByEmail(ctx.user.email);
 
     if (userHasRoles([userRole.ghost], user)) {
-      return true;
+      return ctx;
     }
 
     if (!user) {
@@ -80,5 +99,5 @@ export const validateUserIsPartOfOrg = authActionClient
       redirect("/timesheets");
     }
 
-    return true;
+    return ctx;
   });
