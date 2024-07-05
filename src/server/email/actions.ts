@@ -2,6 +2,7 @@
 import {
   authActionClient,
   rolesActionClient,
+  userHasRoles,
   userRole,
 } from "@/lib/safe-action";
 import { LibsqlError } from "@libsql/client";
@@ -46,8 +47,6 @@ export const sendInvitationsEmail = authActionClient
           throw new Error("User does not belong to an organization");
         }
 
-        const orgId = user.organization_id;
-
         const org = await getUserOrganisation(undefined);
 
         if (!org?.data) {
@@ -63,6 +62,10 @@ export const sendInvitationsEmail = authActionClient
         if (!response.success) {
           throw new Error("Failed to send email");
         }
+
+        const orgId = userHasRoles([userRole.ghost], user)
+          ? parsedInput.orgId
+          : user.organization_id;
 
         // Save invitation
         const invitationSavedIn = await trx.insert(invitations).values({

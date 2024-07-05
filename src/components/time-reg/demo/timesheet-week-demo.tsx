@@ -42,7 +42,6 @@ export const TimesheetWeekDemo = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-3  w-full p-4 md:p-7 rounded-xl shadow-2xl ">
       <TimesheetWeekOverviewDayLayout date={new Date(date)} data={state} demo />
-      {/* <LatestUniqueTimesheets /> */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <Button asChild variant={"default"} className={"max-w-96"}>
           <DialogTrigger>New timesheet</DialogTrigger>
@@ -95,9 +94,6 @@ export const TimesheetWeekDemo = () => {
             >
               Cancel
             </Button>
-            {/* <ConfettiFireworks type="submit" className="ml-auto min-w-28">
-            Save
-          </ConfettiFireworks> */}
             <ConfettiButton
               type="submit"
               className="ml-auto min-w-28"

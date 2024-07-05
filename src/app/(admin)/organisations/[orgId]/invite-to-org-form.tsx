@@ -19,6 +19,7 @@ import { z } from "zod";
 
 type Props = {
   addOptimisticUser?: (email: string) => void;
+  orgId?: number;
 };
 
 export const InviteToOrgForm = (props: Props) => {
@@ -32,7 +33,10 @@ export const InviteToOrgForm = (props: Props) => {
   const onSubmit = form.handleSubmit(async (data) => {
     props.addOptimisticUser && props.addOptimisticUser(data.to);
 
-    const response = await sendInvitationsEmail(data);
+    const response = await sendInvitationsEmail({
+      ...data,
+      orgId: props.orgId,
+    });
 
     if (response?.serverError) {
       toast("Failed to invite!", {

@@ -1,6 +1,7 @@
 import { DataTable } from "@/components/ui/data-table";
 import { getMyTimesheets } from "@/server/timesheet/queries";
 import { columns } from "./columns";
+import { wait } from "@/lib/wait";
 
 export const OverviewTable = async () => {
   const resp = await getMyTimesheets(undefined);
