@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
 import {
   Table,
   TableBody,
@@ -26,9 +24,24 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { NewOrgForm } from "./new-org-form";
+import { userHasRoles, userRole } from "@/lib/safe-action";
+import { getAuthedUser } from "@/server/auth/validate-session";
+import { getUserByEmail } from "@/server/auth";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
   const resp = await getOrganisations(undefined);
+  const user = await getAuthedUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const dbUser = await getUserByEmail(user.email);
+
+  if (!userHasRoles([userRole.ghost], dbUser)) {
+    redirect("/organisations/" + dbUser?.organization_id); //TODO: fix this redirect shit
+  }
 
   if (!resp?.data) {
     return null;

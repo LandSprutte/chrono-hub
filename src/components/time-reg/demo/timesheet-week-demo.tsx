@@ -40,7 +40,7 @@ export const TimesheetWeekDemo = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="flex flex-col items-center justify-center gap-3  w-full p-7 rounded-xl shadow-2xl ">
+    <div className="flex flex-col items-center justify-center gap-3  w-full p-4 md:p-7 rounded-xl shadow-2xl ">
       <TimesheetWeekOverviewDayLayout date={new Date(date)} data={state} demo />
       {/* <LatestUniqueTimesheets /> */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
