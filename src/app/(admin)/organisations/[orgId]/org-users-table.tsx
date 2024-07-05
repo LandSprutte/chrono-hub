@@ -102,7 +102,7 @@ export const OrgUsersTable = ({
               <TableCell>
                 {isInvitation(user) ? null : (
                   <RoleSelector
-                    role={user.role}
+                    orgUser={user}
                     currentLoggedInUser={currentLoggedInUser}
                   />
                 )}

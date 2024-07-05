@@ -52,20 +52,15 @@ export const sendInvitationsEmail = authActionClient
         if (!org?.data) {
           throw new Error("Organization not found");
         }
+        const orgId = userHasRoles([userRole.ghost], user)
+          ? parsedInput.orgId
+          : user.organization_id;
 
-        const response = await sendEmail(
-          to,
-          org?.data?.name.toString(),
-          ctx.user
-        );
+        const response = await sendEmail(to, orgId, ctx.user);
 
         if (!response.success) {
           throw new Error("Failed to send email");
         }
-
-        const orgId = userHasRoles([userRole.ghost], user)
-          ? parsedInput.orgId
-          : user.organization_id;
 
         // Save invitation
         const invitationSavedIn = await trx.insert(invitations).values({

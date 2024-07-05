@@ -75,7 +75,7 @@ export const updateUserRole = rolesActionClient([
       .set({
         role: input.role,
       })
-      .where(eq(users.id, user.id))
+      .where(eq(users.id, input.userId))
       .returning();
   });
 

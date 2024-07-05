@@ -9,17 +9,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { SelectUser } from "@/server/db/schema";
 
 export const RoleSelector = ({
-  role,
+  orgUser,
   currentLoggedInUser,
 }: {
-  role: string | null;
+  orgUser: SelectUser;
   currentLoggedInUser?: User;
 }) => {
   async function onSubmit(data: string) {
+    console.log(data);
     const response = await updateUserRole({
       role: data,
+      userId: orgUser.id,
     });
     if (response?.data) {
       toast("Role updated successfully");
@@ -30,11 +33,11 @@ export const RoleSelector = ({
   return (
     <Select
       onValueChange={onSubmit}
-      defaultValue={role ?? "user"}
+      defaultValue={orgUser.role ?? "user"}
       disabled={!currentLoggedInUser?.isOrgAdmin}
     >
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={role} />
+        <SelectValue placeholder={orgUser.role} />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="org_admin">admin</SelectItem>

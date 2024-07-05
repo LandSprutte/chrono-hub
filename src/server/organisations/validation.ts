@@ -6,4 +6,5 @@ export const orgSchema = z.object({
 
 export const roleSchema = z.object({
   role: z.enum(["org_admin", "user"]),
+  userId: z.string(),
 });
