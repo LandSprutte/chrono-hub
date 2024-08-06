@@ -8,7 +8,6 @@ export const OverviewTable = async () => {
   if (!resp?.data) {
     return null;
   }
-
   return (
     <div className="md:w-2/3 w-full p-2">
       <DataTable columns={columns} data={resp?.data} />

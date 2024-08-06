@@ -28,7 +28,7 @@ export const users = sqliteTable("users", {
   ),
 });
 
-export const userRelations = relations(users, ({ one }) => ({
+export const userRelations = relations(users, ({ one, many }) => ({
   organization: one(organizations, {
     fields: [users.organization_id],
     references: [organizations.id],
@@ -37,6 +37,7 @@ export const userRelations = relations(users, ({ one }) => ({
     fields: [users.email],
     references: [invitations.email],
   }),
+  timesheets: many(timesheets),
 }));
 
 export const invitations = sqliteTable("invitations", {
@@ -86,6 +87,13 @@ export const timesheets = sqliteTable("timesheets", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export const timesheetsRelations = relations(timesheets, ({ one }) => ({
+  user: one(users, {
+    fields: [timesheets.userId],
+    references: [users.id],
+  }),
+}));
 
 export const sessions = sqliteTable("session", {
   id: text("id").notNull().primaryKey(),

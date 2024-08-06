@@ -4,7 +4,6 @@ import { db } from "@/server/db";
 import { NormalizedInterval } from "date-fns";
 import { eq } from "drizzle-orm";
 import { InsertTimesheet, timesheets } from "../db/schema";
-import { get } from "http";
 import { getOrgUsers } from "../users/queries";
 
 export const createTimesheet = (timesheet: InsertTimesheet) => {
@@ -32,6 +31,9 @@ export const getTimesheetsByUser = async (userId: string) => {
   return db.query.timesheets
     .findMany({
       where: (t, { eq }) => eq(t.userId, userId),
+      with: {
+        user: true,
+      },
     })
     .execute();
 };
@@ -51,11 +53,12 @@ export const getTimesheetsForOrg = async (userId: string) => {
   const orgUsers = await getOrgUsers({ orgId: user.organization_id! });
   const userIds = orgUsers?.data?.currentOrg?.users?.map((u) => u.id) ?? [];
 
-  return db.query.timesheets
-    .findMany({
-      where: (t, { inArray }) => inArray(t.userId, userIds),
-    })
-    .execute();
+  return await db.query.timesheets.findMany({
+    where: (t, { inArray }) => inArray(t.userId, userIds),
+    with: {
+      user: true,
+    },
+  });
 };
 
 export const getTimesheetById = async (id: number) => {

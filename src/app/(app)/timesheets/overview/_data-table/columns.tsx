@@ -1,5 +1,5 @@
 "use client";
-import { GetMyTimesheets, GetTimesheets } from "@/server/timesheet/queries";
+import { GetMyTimesheets } from "@/server/timesheet/queries";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ColumnActions } from "./column-actions";
@@ -31,6 +31,10 @@ export const columns: ColumnDef<GetMyTimesheets>[] = [
   {
     header: "Description",
     accessorKey: "content",
+  },
+  {
+    header: "Created By",
+    accessorKey: "user.name",
   },
   {
     id: "actions",
