@@ -1,5 +1,5 @@
 "use client";
-import { GetMyTimesheets } from "@/server/timesheet/queries";
+import { GetMyTimesheets, GetTimesheets } from "@/server/timesheet/queries";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ColumnActions } from "./column-actions";

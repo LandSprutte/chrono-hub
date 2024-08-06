@@ -18,11 +18,6 @@ export default async function RootLayout({
 
   const dbUser = await getUserByEmail(user.email);
 
-  if (user.isOrgAdmin) {
-    dbUser?.role !== "ghost" &&
-      redirect("/organisations/" + dbUser?.organization_id);
-  }
-
   const isAdmin = userHasRoles([userRole.orgAdmin, userRole.ghost], dbUser);
 
   return (

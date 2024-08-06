@@ -1,20 +1,69 @@
 "use server";
-import { authActionClient } from "@/lib/safe-action";
+import {
+  authActionClient,
+  rolesActionClient,
+  userRole,
+} from "@/lib/safe-action";
 import { AwaitedReturnType, UnwrapArray } from "@/lib/type-helpers";
 import { eachDayOfInterval, endOfWeek, interval, startOfWeek } from "date-fns";
 import { z } from "zod";
 import {
   getMyTimesheetsByWeek,
   getTimesheetsByUser,
+  getTimesheetsByWeek,
+  getTimesheetsForOrg,
   getUniqueTimesheets,
 } from "../repo/timesheet-repo";
 
 export const getMyTimesheets = authActionClient
   .schema(z.void())
   .action(async ({ ctx: { user } }) => {
-    const timesheets = await getTimesheetsByUser(user.id);
+    if (!user.isOrgAdmin) {
+      const timesheets = await getTimesheetsByUser(user.id);
 
-    return timesheets;
+      return timesheets;
+    }
+
+    return getTimesheetsForOrg(user.id);
+  });
+
+export const getTimesheets = rolesActionClient([userRole.orgAdmin])
+  .schema(
+    z.object({
+      date: z.coerce.date(),
+    })
+  )
+  .action(async ({ parsedInput: { date }, ctx: { user } }) => {
+    const start = startOfWeek(date, {
+      weekStartsOn: 1,
+    });
+    const end = endOfWeek(date, {
+      weekStartsOn: 1,
+    });
+    const week = interval(start, end);
+
+    const timesheets = await getTimesheetsByWeek(week, user.organization_id!);
+
+    const mapped: Record<string, GetMyTimesheetsByWeek[]> = eachDayOfInterval(
+      week
+    ).reduce((prev: { [key: string]: GetMyTimesheetsByWeek[] }, current) => {
+      const ts = timesheets.filter(
+        (t) => new Date(t.createdAt).toDateString() === current.toDateString()
+      );
+      if (!ts) {
+        return {
+          ...prev,
+          [current.toDateString()]: [],
+        };
+      }
+
+      return {
+        ...prev,
+        [current.toDateString()]: ts,
+      };
+    });
+
+    return mapped;
   });
 
 export const getMyTimesheetsForTheWeekByDate = authActionClient
@@ -73,4 +122,7 @@ export type GetMyTimesheetsByWeek = UnwrapArray<
 >;
 export type GetMyTimesheets = UnwrapArray<
   AwaitedReturnType<typeof getTimesheetsByUser>
+>;
+export type GetTimesheets = UnwrapArray<
+  AwaitedReturnType<typeof getTimesheets>
 >;

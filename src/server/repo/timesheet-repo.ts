@@ -2,8 +2,10 @@ import "server-only";
 
 import { db } from "@/server/db";
 import { NormalizedInterval } from "date-fns";
-import { InsertTimesheet, timesheets } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { InsertTimesheet, timesheets } from "../db/schema";
+import { get } from "http";
+import { getOrgUsers } from "../users/queries";
 
 export const createTimesheet = (timesheet: InsertTimesheet) => {
   return db.insert(timesheets).values(timesheet).returning().execute();
@@ -34,6 +36,28 @@ export const getTimesheetsByUser = async (userId: string) => {
     .execute();
 };
 
+export const getTimesheetsForOrg = async (userId: string) => {
+  const user = await db.query.users.findFirst({
+    where: (u, { eq }) => eq(u.id, userId),
+    with: {
+      organization: true,
+    },
+  });
+
+  if (!user) {
+    return [];
+  }
+
+  const orgUsers = await getOrgUsers({ orgId: user.organization_id! });
+  const userIds = orgUsers?.data?.currentOrg?.users?.map((u) => u.id) ?? [];
+
+  return db.query.timesheets
+    .findMany({
+      where: (t, { inArray }) => inArray(t.userId, userIds),
+    })
+    .execute();
+};
+
 export const getTimesheetById = async (id: number) => {
   return db.query.timesheets.findFirst({ where: (t, { eq }) => eq(t.id, id) });
 };
@@ -47,6 +71,23 @@ export const getMyTimesheetsByWeek = async (
       where: (t, { eq, and, between }) =>
         and(
           eq(t.userId, userId),
+          between(t.createdAt, interval.start, interval.end)
+        ),
+    })
+    .execute();
+};
+export const getTimesheetsByWeek = async (
+  interval: NormalizedInterval<Date>,
+  orgId: number
+) => {
+  const usersInOrg = await getOrgUsers({ orgId });
+
+  const userIds = usersInOrg?.data?.currentOrg?.users?.map((u) => u.id) ?? [];
+  return db.query.timesheets
+    .findMany({
+      where: (t, { and, between, inArray }) =>
+        and(
+          inArray(t.userId, userIds),
           between(t.createdAt, interval.start, interval.end)
         ),
     })

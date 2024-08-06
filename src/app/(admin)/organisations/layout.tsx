@@ -20,6 +20,10 @@ export default async function Layout({
 
   const isAdmin = userHasRoles([userRole.orgAdmin, userRole.ghost], dbUser);
 
+  if (!isAdmin) {
+    redirect("/timesheets");
+  }
+
   return (
     <main className="pt-14">
       <Navigation user={user} isAdmin={isAdmin} />
