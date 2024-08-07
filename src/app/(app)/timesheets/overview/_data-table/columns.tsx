@@ -1,8 +1,15 @@
 "use client";
 import { GetMyTimesheets } from "@/server/timesheet/queries";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { ColumnDef, RowData } from "@tanstack/react-table";
+import { format, interval, isWithinInterval } from "date-fns";
 import { ColumnActions } from "./column-actions";
+
+declare module "@tanstack/react-table" {
+  //allows us to define custom properties for our columns
+  interface ColumnMeta<TData extends RowData, TValue> {
+    filterVariant?: "text" | "range"; // | 'select'
+  }
+}
 
 export const columns: ColumnDef<GetMyTimesheets>[] = [
   {
@@ -17,6 +24,13 @@ export const columns: ColumnDef<GetMyTimesheets>[] = [
           )}
         </div>
       );
+    },
+    meta: {
+      filterVariant: "range",
+    },
+    filterFn: (rows, id, value) => {
+      const intva = interval(value.from, value.to);
+      return isWithinInterval(rows.getValue("createdAt"), intva);
     },
   },
   {
@@ -35,6 +49,7 @@ export const columns: ColumnDef<GetMyTimesheets>[] = [
   {
     header: "Created By",
     accessorKey: "user.name",
+    id: "username",
   },
   {
     id: "actions",

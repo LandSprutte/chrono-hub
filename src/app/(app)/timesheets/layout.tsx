@@ -21,7 +21,7 @@ export default async function RootLayout({
   const isAdmin = userHasRoles([userRole.orgAdmin, userRole.ghost], dbUser);
 
   return (
-    <main className="flex flex-col space-y-4 bg-slate-50">
+    <main className="flex flex-col space-y-4 bg-slate-50 overflow-scroll">
       <Navigation user={user} isAdmin={isAdmin} />
       {children}
     </main>
