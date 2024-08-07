@@ -71,16 +71,18 @@ export function DatePickerWithRange({
             onSelect={setDate}
             numberOfMonths={2}
           />
-          <PopoverClose asChild className="w-full">
-            <Button variant={"ghost"} onClick={() => setDate(undefined)}>
-              Clear
-            </Button>
-          </PopoverClose>
-          <PopoverClose asChild className="w-full">
-            <Button variant={"ghost"} onClick={() => handleSelect()}>
-              Vælg
-            </Button>
-          </PopoverClose>
+          <div className="flex p-4">
+            <PopoverClose asChild className="w-full">
+              <Button variant={"ghost"} onClick={() => setDate(undefined)}>
+                Clear
+              </Button>
+            </PopoverClose>
+            <PopoverClose asChild className="w-full">
+              <Button variant={"default"} onClick={() => handleSelect()}>
+                Vælg
+              </Button>
+            </PopoverClose>
+          </div>
         </PopoverContent>
       </Popover>
     </div>

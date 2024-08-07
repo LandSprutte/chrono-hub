@@ -9,7 +9,7 @@ export const OverviewTable = async () => {
     return null;
   }
   return (
-    <div className="md:w-2/3 w-full p-2">
+    <div className="w-full p-10">
       <DataTable columns={columns} data={resp?.data} />
     </div>
   );
