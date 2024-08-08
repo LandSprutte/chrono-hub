@@ -69,6 +69,7 @@ export const TimesheetFormDialog = (props: {
           timesheet={props.timesheet}
         >
           <Button
+            type="button"
             variant="outline"
             onClick={() => {
               setIsOpen(false);
