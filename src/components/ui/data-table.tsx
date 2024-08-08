@@ -7,6 +7,8 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
+  SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -18,11 +20,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
-import { Input } from "./input";
-import { DatePickerWithRange } from "./date-range";
 import { GetMyTimesheets } from "@/server/timesheet/queries";
-import { group } from "console";
+import { useState } from "react";
+import { DatePickerWithRange } from "./date-range";
+import { Input } from "./input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,14 +35,18 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     state: {
       columnFilters,
+      sorting,
     },
   });
 

@@ -3,6 +3,8 @@ import { GetMyTimesheets } from "@/server/timesheet/queries";
 import { ColumnDef, RowData } from "@tanstack/react-table";
 import { format, interval, isWithinInterval } from "date-fns";
 import { ColumnActions } from "./column-actions";
+import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 declare module "@tanstack/react-table" {
   //allows us to define custom properties for our columns
@@ -14,7 +16,17 @@ declare module "@tanstack/react-table" {
 export const columns: ColumnDef<GetMyTimesheets>[] = [
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return (
         <div>
