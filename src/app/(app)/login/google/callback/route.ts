@@ -29,6 +29,8 @@ const setSessionAndRedirect = async (
 // todo: this should be tested at some point
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
+
+  console.log("url", url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const codeVerifier =
@@ -57,10 +59,18 @@ export async function GET(request: Request): Promise<Response> {
     });
     const googleUser: GoogleUser = await googleUserResponse.json();
 
+    console.log("[googleUser]: ", googleUser.id);
+
     //TODO: replace repository code
-    const existingUser = await db.query.users.findFirst({
-      where: (t, { eq }) => eq(t.google_id, googleUser.id),
-    });
+    const existingUser = await db.query.users
+      .findFirst({
+        where: (t, { eq }) => eq(t.google_id, googleUser.id),
+      })
+      .catch((e) => {
+        console.log("[DB] [existingUser] ", e);
+      });
+
+    console.log("[DB] [existingUser]: ", existingUser);
 
     if (existingUser) {
       return setSessionAndRedirect(existingUser.id);
@@ -87,7 +97,10 @@ export async function GET(request: Request): Promise<Response> {
           name: googleUser.name,
           picture: googleUser.picture,
         })
-        .execute();
+        .execute()
+        .catch((res) => {
+          console.log("res", res);
+        });
       return setSessionAndRedirect(userId);
     }
 
@@ -105,7 +118,10 @@ export async function GET(request: Request): Promise<Response> {
         organization_id: userPendingHasBeenInvitation.organizationId,
         role: userPendingHasBeenInvitation.role,
       })
-      .execute();
+      .execute()
+      .catch((res) => {
+        console.log("res", res);
+      });
 
     await db
       .update(invitations)
@@ -113,10 +129,14 @@ export async function GET(request: Request): Promise<Response> {
         acceptedAt: new Date(),
       })
       .where(eq(invitations.email, googleUser.email))
-      .execute();
+      .execute()
+      .catch((res) => {
+        console.log("res", res);
+      });
 
     return setSessionAndRedirect(userId);
   } catch (e) {
+    console.log("e", e);
     // the specific error message depends on the provider
     if (e instanceof OAuth2RequestError) {
       // invalid code
