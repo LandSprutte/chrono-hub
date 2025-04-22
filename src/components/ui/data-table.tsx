@@ -112,8 +112,9 @@ export function DataTable<TData, TValue>({
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
+                <TableRow key={"no-results"}>
                   <TableCell
+                    key={"no-results"}
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
